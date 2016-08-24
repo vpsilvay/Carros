@@ -25,7 +25,9 @@ public class CarroDAO extends BaseDAO {
                 rs.close();
                 return c;
             }
-        } finally {
+        }catch(SQLException e){ 
+            e.printStackTrace();
+        }finally {
             if (stmt != null) {
                 stmt.close();
             }
@@ -42,7 +44,7 @@ public class CarroDAO extends BaseDAO {
         PreparedStatement stmt = null;
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("select * from carro where lower(nome) like ?");
+            stmt = conn.prepareStatement("select * from carro where lower(nome) like ? order by nome");
             stmt.setString(1, "%" + name.toLowerCase() + "%");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -50,7 +52,9 @@ public class CarroDAO extends BaseDAO {
                 carros.add(c);
             }
             rs.close();
-        } finally {
+        }catch(SQLException e){ 
+            e.printStackTrace();
+        }finally {
             if (stmt != null) {
                 stmt.close();
             }
@@ -68,7 +72,7 @@ public class CarroDAO extends BaseDAO {
         PreparedStatement stmt = null;
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("select * from carro where tipo = ?");
+            stmt = conn.prepareStatement("select * from carro where tipo = ? order by nome");
             stmt.setString(1, tipo);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -76,7 +80,9 @@ public class CarroDAO extends BaseDAO {
                 carros.add(c);
             }
             rs.close();
-        } finally {
+        }catch(SQLException e){ 
+            e.printStackTrace();
+        }finally {
             if (stmt != null) {
                 stmt.close();
             }
@@ -93,14 +99,16 @@ public class CarroDAO extends BaseDAO {
         PreparedStatement stmt = null;
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("select * from carro");
+            stmt = conn.prepareStatement("select * from carro order by nome");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Carro c = createCarro(rs);
                 carros.add(c);
             }
             rs.close();
-        } finally {
+        }catch(SQLException e){ 
+            e.printStackTrace();
+        }finally {
             if (stmt != null) {
                 stmt.close();
             }
@@ -129,10 +137,12 @@ public class CarroDAO extends BaseDAO {
         PreparedStatement stmt = null;
         try {
             conn = getConnection();
-            if (c.getId() == null) {
+            if (c.getId() == 0) {
                 stmt = conn.prepareStatement("insert into carro (nome,descricao,url_foto,url_video,latitude,longitude,tipo) VALUES(?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+                System.out.println(c.toString());
             } else {
                 stmt = conn.prepareStatement("update carro set nome=?,descricao=?,url_foto=?,url_video=?,latitude=?,longitude=?,tipo=? where id=?");
+                System.out.println(c.toString());
             }
             stmt.setString(1, c.getNome());
             stmt.setString(2, c.getDesc());
@@ -141,7 +151,7 @@ public class CarroDAO extends BaseDAO {
             stmt.setString(5, c.getLatitude());
             stmt.setString(6, c.getLongitude());
             stmt.setString(7, c.getTipo());
-            if (c.getId() != null) {
+            if (c.getId() != 0) {
                 // Update
                 stmt.setLong(8, c.getId());
             }
@@ -154,7 +164,9 @@ public class CarroDAO extends BaseDAO {
                 Long id = getGeneratedId(stmt);
                 c.setId(id);
             }
-        } finally {
+        }catch(SQLException e){ 
+            e.printStackTrace();
+        }finally {
             if (stmt != null) {
                 stmt.close();
             }
@@ -184,7 +196,10 @@ public class CarroDAO extends BaseDAO {
             int count = stmt.executeUpdate();
             boolean ok = count > 0;
             return ok;
-        } finally {
+        }catch(SQLException e){ 
+            e.printStackTrace();
+            return false;
+        }finally {
             if (stmt != null) {
                 stmt.close();
             }
