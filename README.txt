@@ -7,3 +7,5 @@ https://raw.githubusercontent.com/livrowebservices/capitulos/master/backup_carro
 2) Comando para importar o dump.
 
 mysql -u livro -plivro123 livro < backup_carros.sql
+
+3) Um contribuidor acrescentado, professorvagnerpinto
